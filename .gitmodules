@@ -1,0 +1,3 @@
+[submodule "src/vendor/MieAyam"]
+	path = src/vendor/MieAyam
+	url = https://github.com/apatheticmindfulness/MieAyam.git
