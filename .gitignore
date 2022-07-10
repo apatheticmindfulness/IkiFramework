@@ -1,3 +1,9 @@
+*.d
+*.filters
+*.vs
+build
+intermediate
+
 # Prerequisites
 *.d
 
