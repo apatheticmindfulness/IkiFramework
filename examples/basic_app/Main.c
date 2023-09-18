@@ -9,8 +9,8 @@
 
 // Pixel size
 // It doesn't have to be the same as The Window Size.
-#define CANVAS_WIDTH WINDOW_WIDTH // Pixel width.
-#define CANVAS_HEIGHT WINDOW_HEIGHT // Pixel height.
+#define CANVAS_WIDTH WINDOW_WIDTH
+#define CANVAS_HEIGHT WINDOW_HEIGHT
 
 int main()
 {
