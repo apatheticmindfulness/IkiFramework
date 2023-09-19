@@ -21,7 +21,7 @@ int main()
 	// Create window
 	IkiCreateWindow("IkiFramework", WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	// Tell the window to use the basic graphic functionalities.
+	// Tell the window to use the basic graphics functionalities.
 	IkiUseBasicGraphics(CANVAS_WIDTH, CANVAS_HEIGHT, 32, false);
 
 	IkiShowWindow();
