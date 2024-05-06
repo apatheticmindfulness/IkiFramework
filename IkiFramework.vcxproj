@@ -84,11 +84,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="examples\basic_app\Main.c" />
     <ClCompile Include="src\iki_basic_graphics.c" />
     <ClCompile Include="src\iki_color.c" />
     <ClCompile Include="src\iki_time.c" />
     <ClCompile Include="src\iki_window.c" />
+    <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\utils\iki_bitmap_loader.c" />
   </ItemGroup>
   <ItemGroup>

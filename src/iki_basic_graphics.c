@@ -11,6 +11,7 @@ typedef struct iki_basic_graphics_struct_t
 	int32_t		height;
 	size_t		totalCanvasSize;
 
+
 	// These variable will change according to the window size
 	float		currentWidth;
 	float		currentHeight;
@@ -20,7 +21,9 @@ typedef struct iki_basic_graphics_struct_t
 	uint8_t		keepAspectRatio;
 
 	BITMAPINFO	winBitmapInfo;
-	iki_color* colorMemory;
+	iki_color * colorMemory;
+	iki_color * colorPerLine;
+
 } iki_basic_graphics_struct;
 
 static iki_basic_graphics_struct		g_graphics;
@@ -30,7 +33,7 @@ uint8_t IkiUseBasicGraphics(int32_t width, int32_t height, int32_t bitCount, uin
 	g_graphics.width = width;
 	g_graphics.height = height;
 	g_graphics.bitCount = bitCount;
-	g_graphics.totalCanvasSize = g_graphics.width * g_graphics.height * sizeof(iki_color);
+	g_graphics.totalCanvasSize = g_graphics.width * g_graphics.height * (size_t)sizeof(iki_color);
 	g_graphics.keepAspectRatio = keepAspectRatio;
 
 	// Configure BitmapInfo
@@ -41,6 +44,16 @@ uint8_t IkiUseBasicGraphics(int32_t width, int32_t height, int32_t bitCount, uin
 	g_graphics.winBitmapInfo.bmiHeader.biBitCount = g_graphics.bitCount;
 	g_graphics.winBitmapInfo.bmiHeader.biCompression = BI_RGB;
 
+
+	g_graphics.colorPerLine = (iki_color*)malloc((size_t)g_graphics.width * sizeof(iki_color));
+	if (!g_graphics.colorPerLine)
+	{
+		// Log : Failed to allocate memory
+		return false;
+	}
+	memset(g_graphics.colorPerLine, 0, (size_t)g_graphics.width * sizeof(iki_color));
+
+
 	// Allocate memory
 	g_graphics.colorMemory = (iki_color*)VirtualAlloc(0, g_graphics.totalCanvasSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	if (!g_graphics.colorMemory)
@@ -50,6 +63,23 @@ uint8_t IkiUseBasicGraphics(int32_t width, int32_t height, int32_t bitCount, uin
 	}
 
 	return true;
+}
+
+uint8_t IkiEndBasicGraphics(void)
+{
+	if (g_graphics.colorPerLine)
+	{
+		free(g_graphics.colorPerLine);
+		g_graphics.colorPerLine = 0;
+	}
+
+	BOOL result = VirtualFree(g_graphics.colorMemory, 0, MEM_RELEASE);
+	if (result)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void IkiRenderStart(void)
@@ -122,13 +152,29 @@ void IkiRenderEnd(void)
 	ReleaseDC(IkiGetWindowHandle(), dc);
 }
 
+static iki_color previousColor = COLOR_BLACK;
+
 void IkiClearBackground(iki_color color)
 {
-	const iki_color clearBackgroundColor = color;
-	for (int32_t x = 0; x < g_graphics.width * g_graphics.height; x++)
+	// These operations only runs when the color is change
+	if(!IkiIsColorEqual(color, previousColor))
 	{
-		memcpy(g_graphics.colorMemory + x, &clearBackgroundColor, sizeof(iki_color));
+		// Copy the new color to colorPerLine
+		for (int x = 0; x < g_graphics.width; ++x)
+		{
+			memcpy(g_graphics.colorPerLine + x, &color, sizeof(iki_color));
+		}
 	}
+
+	// Copy all data from the colorPerLine into the colorMemory.
+	// We're not copying per pixel, we're copying per row.
+	for (int32_t y = 0; y < g_graphics.height; ++y)
+	{
+		int width = g_graphics.width * y;
+		memcpy(g_graphics.colorMemory + width, g_graphics.colorPerLine, g_graphics.width * sizeof(iki_color));
+	}
+
+	previousColor = color;
 }
 
 float IkiGetCurrentCanvasWidth()

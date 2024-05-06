@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 iki_color	IkiColorFromHex(uint32_t colorCode);
+uint8_t		IkiIsColorEqual(iki_color color1, iki_color color2);
 
 #ifdef __cplusplus
 }

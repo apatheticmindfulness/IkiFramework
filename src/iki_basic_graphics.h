@@ -7,6 +7,8 @@ extern "C" {
 #endif
 
 uint8_t		IkiUseBasicGraphics(int32_t width, int32_t height, int32_t bitCount, uint8_t keepAspectRatio);
+uint8_t		IkiEndBasicGraphics(void);
+
 void		IkiRenderStart(void);
 void		IkiSetPixel(int32_t x, int32_t y, iki_color color);
 void		IkiRenderEnd(void);

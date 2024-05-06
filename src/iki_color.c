@@ -9,3 +9,11 @@ iki_color IkiColorFromHex(uint32_t colorCode)
 	const iki_color color = { blue, green, red, 0xFF };
 	return color;
 }
+
+uint8_t IkiIsColorEqual(iki_color color1, iki_color color2)
+{
+	return color1.r == color2.r &&
+		color1.g == color2.g &&
+		color1.b == color2.b &&
+		color1.a == color2.a;
+}
